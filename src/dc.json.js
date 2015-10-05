@@ -16,9 +16,13 @@ var charts = {
     linechart: require('./linechart')
 };
 
-function dc_json(chart, params) {
+function dc_json(anchor, chartGroup, params) {
     var name, i;
+    if (arguments.length === 2) {
+        params = chartGroup;
+    }
     if (!params) return;
+    chart = dc[params._type](anchor, arguments.length === 3 ? chartGroup : undefined);
     // base mixin
     for (i = 0; i < base_mixin.absolutes.length; ++i) {
         name = base_mixin.absolutes[i];
@@ -29,6 +33,9 @@ function dc_json(chart, params) {
         name = base_mixin.templates[i];
         if (params[name] != null) chart[name](accessorify(params[name]));
     }
+
+    charts[params._type](chart, params);
+    return chart;
 }
 
 module.exports = dc_json;
